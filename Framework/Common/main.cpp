@@ -3,6 +3,8 @@
 
 using namespace My;
 
+
+// 在 empty 文件夹下进行了定义与声明
 namespace My {
 	extern IApplication* g_pApp;
 }
