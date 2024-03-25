@@ -1,6 +1,5 @@
+#pragma once
 
-#pragma once 
+#define Interface class
 
-#define Interface class 
-
-#define implements public 
+#define implements public
