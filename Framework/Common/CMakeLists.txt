@@ -1,7 +1,7 @@
-add_library(Common 
-BaseApplication.cpp 
-GraphicsManager.cpp 
-MemoryManager.cpp
+add_library(Common
 Allocator.cpp
+BaseApplication.cpp
+GraphicsManager.cpp
+MemoryManager.cpp
 main.cpp
 )
