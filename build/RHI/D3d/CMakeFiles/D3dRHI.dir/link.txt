@@ -1,0 +1,2 @@
+D:/LLVM/bin/llvm-ar.exe qc D3dRHI.lib CMakeFiles/D3dRHI.dir/D3d12GraphicsManager.cpp.obj
+D:/LLVM/bin/llvm-ranlib.exe D3dRHI.lib

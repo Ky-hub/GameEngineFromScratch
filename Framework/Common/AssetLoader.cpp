@@ -74,7 +74,6 @@ My::AssetLoader::AssetFilePtr My::AssetLoader::OpenFile(const char* name, AssetO
                 fullPath.append("Asset/");
                 looping = false;
             }
-            
             fullPath.append(name);
 #ifdef DEBUG
             fprintf(stderr, "Trying to open %s\n", fullPath.c_str());
@@ -123,6 +122,30 @@ My::Buffer My::AssetLoader::SyncOpenAndReadText(const char *filePath)
     return *pBuff;
 }
 
+My::Buffer My::AssetLoader::SyncOpenAndReadBinary(const char *filePath)
+{
+    AssetFilePtr fp = OpenFile(filePath, MY_OPEN_BINARY);
+    Buffer* pBuff = nullptr;
+
+    if (fp) {
+        size_t length = GetSize(fp);
+
+        pBuff = new Buffer(length);
+        fread(pBuff->m_pData, length, 1, static_cast<FILE*>(fp));
+
+        CloseFile(fp);
+    } else {
+        fprintf(stderr, "Error opening file '%s'\n", filePath);
+        pBuff = new Buffer();
+    }
+
+#ifdef DEBUG
+    fprintf(stderr, "Read file '%s', %d bytes\n", filePath, length);
+#endif
+
+    return *pBuff;
+}
+
 void My::AssetLoader::CloseFile(AssetFilePtr& fp)
 {
     fclose((FILE*)fp);
@@ -152,10 +175,6 @@ size_t My::AssetLoader::SyncRead(const AssetFilePtr& fp, Buffer& buf)
 
     sz = fread(buf.m_pData, buf.m_szSize, 1, static_cast<FILE*>(fp));
 
-
-#ifdef DEBUG
-    fprintf(stderr, "Read file '%s', %d bytes\n", filePath, length);
-#endif
 
     return sz;
 }

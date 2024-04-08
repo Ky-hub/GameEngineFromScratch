@@ -1,0 +1,1 @@
+ WindowsApplication.lib ../../Framework/Common/Common.lib ../../RHI/D3d/D3dRHI.lib -ld3d12.lib -ldxgi.lib -ld3dcompiler.lib ../../Framework/GeomMath/GeomMath.lib -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 -loldnames 

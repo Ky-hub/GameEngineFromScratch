@@ -1,0 +1,2 @@
+D:/LLVM/bin/llvm-ar.exe qc OpenGLRHI.lib CMakeFiles/OpenGLRHI.dir/OpenGLGraphicsManager.cpp.obj CMakeFiles/OpenGLRHI.dir/__/__/External/GL/src/glad.c.obj
+D:/LLVM/bin/llvm-ranlib.exe OpenGLRHI.lib
