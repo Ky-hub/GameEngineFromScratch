@@ -1,2 +1,0 @@
-D:/LLVM/bin/llvm-ar.exe qc WindowsApplication.lib CMakeFiles/WindowsApplication.dir/WindowsApplication.cpp.obj
-D:/LLVM/bin/llvm-ranlib.exe WindowsApplication.lib

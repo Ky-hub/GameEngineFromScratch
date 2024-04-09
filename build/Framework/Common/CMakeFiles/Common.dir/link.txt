@@ -1,2 +1,0 @@
-D:/LLVM/bin/llvm-ar.exe qc Common.lib CMakeFiles/Common.dir/Allocator.cpp.obj CMakeFiles/Common.dir/BaseApplication.cpp.obj CMakeFiles/Common.dir/AssetLoader.cpp.obj CMakeFiles/Common.dir/GraphicsManager.cpp.obj CMakeFiles/Common.dir/MemoryManager.cpp.obj CMakeFiles/Common.dir/main.cpp.obj
-D:/LLVM/bin/llvm-ranlib.exe Common.lib

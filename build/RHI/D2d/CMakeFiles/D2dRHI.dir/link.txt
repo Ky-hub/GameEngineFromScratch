@@ -1,2 +1,0 @@
-D:/LLVM/bin/llvm-ar.exe qc D2dRHI.lib CMakeFiles/D2dRHI.dir/D2dGraphicsManager.cpp.obj
-D:/LLVM/bin/llvm-ranlib.exe D2dRHI.lib

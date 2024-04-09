@@ -28,9 +28,11 @@ namespace My {
         virtual int Initialize();
 
         virtual void OnDraw();
+        virtual void Tick();
 
     private:
         Image m_Image[2];
+        bool m_bDrawFlag;
     };
 }
 
@@ -44,7 +46,10 @@ namespace My {
 
 int My::TestApplication::Initialize()
 {
+
     int result;
+
+    m_bDrawFlag = true;
 
     result = WindowsApplication::Initialize();
 
@@ -60,21 +65,44 @@ int My::TestApplication::Initialize()
         m_Image[1] = parser.Parse(buf);
     }
 
+
     return result;
 }
 
 void My::TestApplication::OnDraw()
 {
+
     dynamic_cast<TestGraphicsManager*>(g_pGraphicsManager)->DrawBitmap(m_Image, 0);
     dynamic_cast<TestGraphicsManager*>(g_pGraphicsManager)->DrawBitmap(m_Image, 1);
 }
 
+void My::TestApplication::Tick()
+{
+    if ( m_bDrawFlag ){
+        OnDraw();
+        m_bDrawFlag = false;
+    }
+    
+}
+
 void My::TestGraphicsManager::DrawBitmap(const Image* image, int32_t index)
 {
+
+    
 	HRESULT hr;
 
+    if( m_pRenderTarget )
+    {
+        std::cout<<" not nullptr "<<std::endl;
+    }
+    else
+    {
+        std::cout<<" nullptr "<<std::endl;
+        return;
+    }
     // start build GPU draw command
     m_pRenderTarget->BeginDraw();
+    
 
     D2D1_BITMAP_PROPERTIES props;
     props.pixelFormat.format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -111,3 +139,7 @@ void My::TestGraphicsManager::DrawBitmap(const Image* image, int32_t index)
     // end GPU draw command building
     m_pRenderTarget->EndDraw();
 }
+
+
+
+
