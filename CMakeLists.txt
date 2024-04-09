@@ -1,37 +1,52 @@
 cmake_minimum_required (VERSION 3.1) 
-# IF(${UNIX})
-#     set (CMAKE_C_COMPILER               "clang")
-#     set (CMAKE_C_FLAGS_DEBUG            "-g")
-#     set (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 -g")
-#     set (CMAKE_CXX_COMPILER             "clang++")
-#     set (CMAKE_CXX_FLAGS                "-Wall")
-#     set (CMAKE_CXX_FLAGS_DEBUG          "-g")
-#     set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-#     set (CMAKE_CXX_STANDARD 11)
-# ELSEIF(${WIN32})
-#     # Windows specific code
-#     set (CMAKE_C_COMPILER               "clang-cl")
-#     set (CMAKE_C_FLAGS_DEBUG            "/Debug /Zi")
-#     set (CMAKE_C_FLAGS_RELWITHDEBINFO   "-O2 /Debug")
-#     set (CMAKE_CXX_COMPILER             "clang-cl")
-#     set (CMAKE_CXX_FLAGS_DEBUG          "/Debug /Zi")
-#     set (CMAKE_CXX_FLAGS                "-Wall -Xclang -std=gnu++14")
-#     set (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 /Debug")
-# ENDIF(${UNIX})
-# set (CMAKE_C_FLAGS                  "-Wall")
-# set (CMAKE_C_FLAGS_MINSIZEREL       "-Os -DNDEBUG")
-# set (CMAKE_C_FLAGS_RELEASE          "-O4 -DNDEBUG")
-# set (CMAKE_C_STANDARD 11)
-# set (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-# set (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
+
+
+project (GameEngineFromScrath)
+set (CMAKE_C_STANDARD 99)
+set (CMAKE_CXX_STANDARD 11)
+
+
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Platform")
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/External/src/crossguid/cmake")
+include(TargetArchDetect)
+
+target_architecture(TARGET_ARCH)
+
+if((TARGET_ARCH MATCHES "x86_64" OR TARGET_ARCH MATCHES "ia64") AND NOT OF_32BIT)
+        set(ARCH_BIT 64)
+else()
+        set(ARCH_BIT 32)
+endif()
+
+
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Codec")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Common")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/GeomMath")
+include_directories("${PROJECT_SOURCE_DIR}/RHI")
+IF(${UNIX})
+    set(MYGE_TARGET_PLATFORM "Linux")
+ELSEIF(${WIN32})
+    set(MYGE_TARGET_PLATFORM "Windows")
+ENDIF(${UNIX})
+include_directories("${PROJECT_SOURCE_DIR}/Platform/${MYGE_TARGET_PLATFORM}")
+set(MYGE_EXTERNAL_ROOT ${PROJECT_SOURCE_DIR}/External/${MYGE_TARGET_PLATFORM}/)
+include_directories("${MYGE_EXTERNAL_ROOT}include")
+set(MYGE_EXTERNAL_LIBRARY_PATH ${MYGE_EXTERNAL_ROOT}lib/)
+include(CTest)
+add_subdirectory(Framework)
+add_subdirectory(Platform)
+add_subdirectory(RHI)
+
+
+
 
 # ------------------------- Begin Generic CMake Variable Logging ------------------
 
 # /*	C++ comment style not allowed	*/
 
 
-# if you are building in-source, this is the same as CMAKE_SOURCE_DIR, otherwise 
-# this is the top level directory of your build tree 
 MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
 
 # if you are building in-source, this is the same as CMAKE_CURRENT_SOURCE_DIR, otherwise this 
@@ -172,26 +187,3 @@ MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX} )
 # the tools for creating libraries 
 MESSAGE( STATUS "CMAKE_AR: " ${CMAKE_AR} )
 MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )
-
-#
-#MESSAGE( STATUS ": " ${} )
-
-# ------------------------- End of Generic CMake Variable Logging ------------------
-
-project (GameEngineFromScrath)
-
-
-include_directories("${PROJECT_SOURCE_DIR}/Framework/Codec")
-include_directories("${PROJECT_SOURCE_DIR}/Framework/Common")
-include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
-include_directories("${PROJECT_SOURCE_DIR}/Framework/GeomMath")
-include_directories("${PROJECT_SOURCE_DIR}/RHI")
-IF(${UNIX})
-    include_directories("${PROJECT_SOURCE_DIR}/Platform/Linux")
-ELSEIF(${WIN32})
-    include_directories("${PROJECT_SOURCE_DIR}/Platform/Windows")
-ENDIF(${UNIX})
-include(CTest)
-add_subdirectory(Framework)
-add_subdirectory(Platform)
-add_subdirectory(RHI)
