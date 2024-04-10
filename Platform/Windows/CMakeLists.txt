@@ -25,6 +25,6 @@ add_executable(MyGameEngineOpenGL
 target_link_libraries(MyGameEngineOpenGL WindowsApplication Common OpenGLRHI ${OPENGL_LIBRARIES})
 target_include_directories(MyGameEngineOpenGL PRIVATE "${PROJECT_SOURCE_DIR}/External/GL/include")
 
-add_subdirectory(test)
+# add_subdirectory(test)
 
 

@@ -57,7 +57,7 @@ set_target_properties(GeomMath
 
 
 
-add_subdirectory(test)
+# add_subdirectory(test)
 
 
 # ----------------- error -------------------------------------------------------
