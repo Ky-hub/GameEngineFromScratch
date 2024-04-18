@@ -3,3 +3,4 @@ export void Transpose(uniform const float a[], uniform float r[], uniform const 
 		r[j*row_count+i] = a[i*column_count+j];
 	}
 }
+

@@ -4,3 +4,4 @@ export void MulByElement(uniform const float a[], uniform const float b[], unifo
 		result[index] = a[index] * b[index];
 	}
 }
+

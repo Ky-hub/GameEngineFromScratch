@@ -48,8 +48,6 @@ namespace My {
                 std::cout << "Image BitCount: " << pBmpHeader->BitCount << std::endl;
                 std::cout << "Image Compression: " << pBmpHeader->Compression << std::endl;
                 std::cout << "Image Size: " << pBmpHeader->SizeImage << std::endl;
-                std::cout << "PelsPerMeterX: " << pBmpHeader->PelsPerMeterX << std::endl;
-
 
                 img.Width = pBmpHeader->Width;
                 img.Height = pBmpHeader->Height;
@@ -65,7 +63,6 @@ namespace My {
                     for (int32_t y = img.Height - 1; y >= 0; y--) {
                         for (uint32_t x = 0; x < img.Width; x++) {
                             (img.data + img.Width * (img.Height - y - 1) + x)->bgra = *reinterpret_cast<R8G8B8A8Unorm*>(pSourceData + img.pitch * y + x * (img.bitcount >> 3));
-                            // std::cout << uint16_t((img.data + img.Width * (img.Height - y - 1) + x)->data[0])  << std::endl;
                         }
                     }
                 }
@@ -75,3 +72,6 @@ namespace My {
         }
     };
 }
+
+
+

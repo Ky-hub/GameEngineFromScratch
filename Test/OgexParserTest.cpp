@@ -1,46 +1,65 @@
 #include <iostream>
-#include "SceneObject.hpp"
-#include "SceneNode.hpp"
+#include <string>
+#include "AssetLoader.hpp"
+#include "MemoryManager.hpp"
+#include "OGEX.hpp"
 
 using namespace My;
 using namespace std;
-using namespace xg;
 
-int32_t main(int32_t argc, char** argv)
-{
-    int32_t result = 0;
-    std::shared_ptr<SceneObjectGeometry>    soGeometry(new SceneObjectGeometry());
-    std::shared_ptr<SceneObjectOmniLight>    soOmniLight(new SceneObjectOmniLight());
-    std::shared_ptr<SceneObjectSpotLight>    soSpotLight(new SceneObjectSpotLight());
-    std::shared_ptr<SceneObjectOrthogonalCamera>      soOrthogonalCamera(new SceneObjectOrthogonalCamera());
-    std::shared_ptr<SceneObjectPerspectiveCamera>     soPerspectiveCamera(new SceneObjectPerspectiveCamera());
-
-    std::shared_ptr<SceneObjectMesh>         soMesh(new SceneObjectMesh());
-    std::shared_ptr<SceneObjectMaterial>     soMaterial(new SceneObjectMaterial());
-
-    soGeometry->AddMesh(soMesh);
-
-    cout << *soGeometry << endl;
-    cout << *soMaterial << endl;
-    cout << *soOmniLight << endl;
-    cout << *soSpotLight << endl;
-    cout << *soOrthogonalCamera  << endl;
-    cout << *soPerspectiveCamera << endl;
-
-    SceneEmptyNode      snEmpty;
-    std::unique_ptr<SceneGeometryNode>   snGeometry(new SceneGeometryNode());
-    std::unique_ptr<SceneLightNode>     snLight(new SceneLightNode());
-    std::unique_ptr<SceneCameraNode>     snCamera(new SceneCameraNode());
-
-    snGeometry->AddSceneObjectRef("soGeometry");
-    snLight->AddSceneObjectRef("soSpotLight");
-    snCamera->AddSceneObjectRef("soOrthogonalCamera");
-
-    snEmpty.AppendChild(std::move(snGeometry));
-    snEmpty.AppendChild(std::move(snLight));
-    snEmpty.AppendChild(std::move(snCamera));
-
-    cout << snEmpty << endl;
-
-    return result;
+namespace My {
+    MemoryManager* g_pMemoryManager = new MemoryManager();
+    AssetLoader*   g_pAssetLoader   = new AssetLoader();
 }
+
+template<typename Key, typename T>
+static ostream& operator<<(ostream& out, unordered_map<Key, T> map)
+{
+    for (auto p : map)
+    {
+        out << *p.second << endl;
+    }
+
+    return out;
+}
+
+int main(int , char** )
+{
+    g_pMemoryManager->Initialize();
+    g_pAssetLoader->Initialize();
+
+    string ogex_text = g_pAssetLoader->SyncOpenAndReadTextFileToString("Scene/Example.ogex");
+
+    OgexParser* ogex_parser = new OgexParser ();
+    unique_ptr<Scene> pScene = ogex_parser->Parse(ogex_text);
+    delete ogex_parser;
+
+    cout << "Dump of Scene Graph" << endl;
+    cout << "---------------------------" << endl;
+    cout << *pScene->SceneGraph << endl;
+
+    cout << "Dump of Cameras" << endl;
+    cout << "---------------------------" << endl;
+    cout << pScene->Cameras << endl;
+
+    cout << "Dump of Lights" << endl;
+    cout << "---------------------------" << endl;
+    cout << pScene->Lights  << endl;
+
+    cout << "Dump of Geometries" << endl;
+    cout << "---------------------------" << endl;
+    cout << pScene->Geometries << endl;
+
+    cout << "Dump of Materials" << endl;
+    cout << "---------------------------" << endl;
+    cout << pScene->Materials << endl;
+
+    g_pAssetLoader->Finalize();
+    g_pMemoryManager->Finalize();
+
+    delete g_pAssetLoader;
+    delete g_pMemoryManager;
+
+    return 0;
+}
+

@@ -15,8 +15,6 @@ namespace My {
     protected:
         ID2D1Factory            *m_pFactory = nullptr;
         ID2D1HwndRenderTarget   *m_pRenderTarget = nullptr;
-
-
-        
     };
 }
+

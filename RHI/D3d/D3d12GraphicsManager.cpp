@@ -453,3 +453,5 @@ void My::D3d12GraphicsManager::Finalize()
 	SafeRelease(&m_pSwapChain);
 	SafeRelease(&m_pDev);
 }
+
+

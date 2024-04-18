@@ -60,3 +60,4 @@ void My::D2dGraphicsManager::Finalize()
 
     CoUninitialize();
 }
+

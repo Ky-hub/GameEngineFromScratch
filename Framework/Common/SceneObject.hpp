@@ -273,7 +273,8 @@ namespace My {
             void AddVertexArray(SceneObjectVertexArray&& array) { m_VertexArray.push_back(std::move(array)); };
 			void SetPrimitiveType(PrimitiveType type) { m_PrimitiveType = type;  };
 
-            size_t GetIndexCount() const { return (m_IndexArray.empty()? 0 : m_IndexArray[0].GetIndexCount()); };
+            size_t GetIndexGroupCount() const { return m_IndexArray.size(); };
+            size_t GetIndexCount(const size_t index) const { return (m_IndexArray.empty()? 0 : m_IndexArray[index].GetIndexCount()); };
             size_t GetVertexCount() const { return (m_VertexArray.empty()? 0 : m_VertexArray[0].GetVertexCount()); };
             size_t GetVertexPropertiesCount() const { return m_VertexArray.size(); }; 
             const SceneObjectVertexArray& GetVertexPropertyArray(const size_t index) const { return m_VertexArray[index]; };
@@ -452,6 +453,14 @@ namespace My {
                 }
             };
 
+            void SetAttenuation(AttenFunc func)
+            {
+                m_LightAttenuation = func;
+            }
+
+            const Color& GetColor() { return m_LightColor; };
+            float GetIntensity() { return m_fIntensity; };
+
         protected:
             // can only be used as base class of delivered lighting objects
             SceneObjectLight(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeLight), m_LightColor(Vector4f(1.0f)), m_fIntensity(100.0f), m_LightAttenuation(DefaultAttenFunc), m_bCastShadows(false) {};
@@ -476,6 +485,14 @@ namespace My {
             SceneObjectSpotLight(void) : SceneObjectLight(), m_fConeAngle(PI / 4.0f), m_fPenumbraAngle(PI / 3.0f) {};
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectSpotLight& obj);
+    };
+
+    class SceneObjectInfiniteLight : public SceneObjectLight
+    {
+        public:
+            using SceneObjectLight::SceneObjectLight;
+
+        friend std::ostream& operator<<(std::ostream& out, const SceneObjectInfiniteLight& obj);
     };
 
     class SceneObjectCamera : public BaseSceneObject
@@ -506,6 +523,9 @@ namespace My {
                 // TODO: extension
             };
 
+            float GetNearClipDistance() const { return m_fNearClipDistance; };
+            float GetFarClipDistance() const { return m_fFarClipDistance; };
+
         protected:
             // can only be used as base class
             SceneObjectCamera(void) : BaseSceneObject(SceneObjectType::kSceneObjectTypeCamera), m_fAspect(16.0f / 9.0f), m_fNearClipDistance(1.0f), m_fFarClipDistance(100.0f) {};
@@ -533,10 +553,12 @@ namespace My {
                 if(attrib == "fov") {
                     m_fFov = param; 
                 }
+                SceneObjectCamera::SetParam(attrib, param);
             };
 
         public:
             SceneObjectPerspectiveCamera(float fov = PI / 2.0) : SceneObjectCamera(), m_fFov(fov) {};
+            float GetFov() const { return m_fFov; };
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectPerspectiveCamera& obj);
     };
@@ -551,6 +573,9 @@ namespace My {
             SceneObjectTransform() { BuildIdentityMatrix(m_matrix); m_bSceneObjectOnly = false; };
 
             SceneObjectTransform(const Matrix4X4f& matrix, const bool object_only = false) { m_matrix = matrix; m_bSceneObjectOnly = object_only; };
+
+            operator Matrix4X4f() { return m_matrix; };
+            operator const Matrix4X4f() const { return m_matrix; };
 
         friend std::ostream& operator<<(std::ostream& out, const SceneObjectTransform& obj);
     };
