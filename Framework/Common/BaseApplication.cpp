@@ -15,7 +15,7 @@ int My::BaseApplication::Initialize()
 {
     int result = 0;
 
-    std::wcout << m_Config;
+    std::cout << m_Config;
 
 	return result;
 }
@@ -36,3 +36,4 @@ bool My::BaseApplication::IsQuit()
 {
 	return m_bQuit;
 }
+

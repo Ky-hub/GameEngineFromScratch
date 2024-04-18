@@ -4,6 +4,7 @@
 #include "D2d/D2dGraphicsManager.hpp"
 #include "MemoryManager.hpp"
 #include "AssetLoader.hpp"
+#include "SceneManager.hpp"
 #include "utility.hpp"
 #include "BMP.hpp"
 
@@ -28,11 +29,9 @@ namespace My {
         virtual int Initialize();
 
         virtual void OnDraw();
-        virtual void Tick();
 
     private:
         Image m_Image[2];
-        bool m_bDrawFlag;
     };
 }
 
@@ -41,68 +40,42 @@ namespace My {
 	IApplication* g_pApp                = static_cast<IApplication*>(new TestApplication(config));
     GraphicsManager* g_pGraphicsManager = static_cast<GraphicsManager*>(new TestGraphicsManager);
     MemoryManager*   g_pMemoryManager   = static_cast<MemoryManager*>(new MemoryManager);
-
+    AssetLoader*     g_pAssetLoader     = static_cast<AssetLoader*>(new AssetLoader);
+    SceneManager*    g_pSceneManager    = static_cast<SceneManager*>(new SceneManager);
 }
 
 int My::TestApplication::Initialize()
 {
-
     int result;
-
-    m_bDrawFlag = true;
 
     result = WindowsApplication::Initialize();
 
     if (result == 0) {
-        AssetLoader asset_loader;
         BmpParser   parser;
-        Buffer buf = asset_loader.SyncOpenAndReadBinary("Textures/icelogo-color.bmp");
+        Buffer buf = g_pAssetLoader->SyncOpenAndReadBinary("Textures/icelogo-color.bmp");
 
         m_Image[0] = parser.Parse(buf);
 
-        buf = asset_loader.SyncOpenAndReadBinary("Textures/icelogo-normal.bmp");
+        buf = g_pAssetLoader->SyncOpenAndReadBinary("Textures/icelogo-normal.bmp");
 
         m_Image[1] = parser.Parse(buf);
     }
-
 
     return result;
 }
 
 void My::TestApplication::OnDraw()
 {
-
     dynamic_cast<TestGraphicsManager*>(g_pGraphicsManager)->DrawBitmap(m_Image, 0);
     dynamic_cast<TestGraphicsManager*>(g_pGraphicsManager)->DrawBitmap(m_Image, 1);
 }
 
-void My::TestApplication::Tick()
-{
-    if ( m_bDrawFlag ){
-        OnDraw();
-        m_bDrawFlag = false;
-    }
-    
-}
-
 void My::TestGraphicsManager::DrawBitmap(const Image* image, int32_t index)
 {
-
-    
 	HRESULT hr;
 
-    if( m_pRenderTarget )
-    {
-        std::cout<<" not nullptr "<<std::endl;
-    }
-    else
-    {
-        std::cout<<" nullptr "<<std::endl;
-        return;
-    }
     // start build GPU draw command
     m_pRenderTarget->BeginDraw();
-    
 
     D2D1_BITMAP_PROPERTIES props;
     props.pixelFormat.format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -139,7 +112,5 @@ void My::TestGraphicsManager::DrawBitmap(const Image* image, int32_t index)
     // end GPU draw command building
     m_pRenderTarget->EndDraw();
 }
-
-
 
 

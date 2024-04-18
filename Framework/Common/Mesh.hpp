@@ -67,3 +67,4 @@ namespace My {
         uint32_t m_reserved[2];
     };
 }
+

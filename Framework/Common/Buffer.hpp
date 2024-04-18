@@ -60,3 +60,4 @@ namespace My {
         size_t m_szAlignment;
     };
 }
+

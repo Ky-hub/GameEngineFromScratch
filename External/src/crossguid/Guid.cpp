@@ -42,6 +42,10 @@ THE SOFTWARE.
 #include <cassert>
 #endif
 
+#ifdef __ORBIS__
+#include <kernel.h>
+#endif
+
 BEGIN_XG_NAMESPACE
 
 #ifdef GUID_ANDROID
@@ -389,6 +393,17 @@ Guid newGuid(JNIEnv *env)
 Guid newGuid()
 {
 	return newGuid(androidInfo.env);
+}
+#endif
+
+#ifdef __ORBIS__ 
+Guid newGuid()
+{
+    Guid newId;
+    SceKernelUuid id;
+    sceKernelUuidCreate(&id);
+    memcpy((void*)&newId, (void*)&id, 16);
+	return newId;
 }
 #endif
 

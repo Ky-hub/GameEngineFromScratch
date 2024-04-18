@@ -1,32 +1,46 @@
 #include <iostream>
-#include <string>
-#include "AssetLoader.hpp"
-#include "MemoryManager.hpp"
-#include "OGEX.hpp"
+#include "SceneObject.hpp"
+#include "SceneNode.hpp"
 
 using namespace My;
 using namespace std;
+using namespace xg;
 
-namespace My {
-    MemoryManager* g_pMemoryManager = new MemoryManager();
-}
-
-int main(int , char** )
+int32_t main(int32_t argc, char** argv)
 {
-    g_pMemoryManager->Initialize();
+    int32_t result = 0;
+    std::shared_ptr<SceneObjectGeometry>    soGeometry(new SceneObjectGeometry());
+    std::shared_ptr<SceneObjectOmniLight>    soOmniLight(new SceneObjectOmniLight());
+    std::shared_ptr<SceneObjectSpotLight>    soSpotLight(new SceneObjectSpotLight());
+    std::shared_ptr<SceneObjectOrthogonalCamera>      soOrthogonalCamera(new SceneObjectOrthogonalCamera());
+    std::shared_ptr<SceneObjectPerspectiveCamera>     soPerspectiveCamera(new SceneObjectPerspectiveCamera());
 
-    AssetLoader asset_loader;
-    string ogex_text = asset_loader.SyncOpenAndReadTextFileToString("Scene/Example.ogex");
+    std::shared_ptr<SceneObjectMesh>         soMesh(new SceneObjectMesh());
+    std::shared_ptr<SceneObjectMaterial>     soMaterial(new SceneObjectMaterial());
 
-    OgexParser* ogex_parser = new OgexParser ();
-    unique_ptr<BaseSceneNode> root_node = ogex_parser->Parse(ogex_text);
-    delete ogex_parser;
+    soGeometry->AddMesh(soMesh);
 
-    cout << *root_node << endl;
+    cout << *soGeometry << endl;
+    cout << *soMaterial << endl;
+    cout << *soOmniLight << endl;
+    cout << *soSpotLight << endl;
+    cout << *soOrthogonalCamera  << endl;
+    cout << *soPerspectiveCamera << endl;
 
-    g_pMemoryManager->Finalize();
+    SceneEmptyNode      snEmpty;
+    std::unique_ptr<SceneGeometryNode>   snGeometry(new SceneGeometryNode());
+    std::unique_ptr<SceneLightNode>     snLight(new SceneLightNode());
+    std::unique_ptr<SceneCameraNode>     snCamera(new SceneCameraNode());
 
-    delete g_pMemoryManager;
+    snGeometry->AddSceneObjectRef("soGeometry");
+    snLight->AddSceneObjectRef("soSpotLight");
+    snCamera->AddSceneObjectRef("soOrthogonalCamera");
 
-    return 0;
+    snEmpty.AppendChild(std::move(snGeometry));
+    snEmpty.AppendChild(std::move(snLight));
+    snEmpty.AppendChild(std::move(snCamera));
+
+    cout << snEmpty << endl;
+
+    return result;
 }

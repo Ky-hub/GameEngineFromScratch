@@ -16,15 +16,17 @@ namespace My {
         // One cycle of the main loop
         virtual void Tick();
 
+        HWND GetMainWindow() { return m_hWnd; }
+
+    private:
         // the WindowProc function prototype
         static LRESULT CALLBACK WindowProc(HWND hWnd,
                          UINT message,
                          WPARAM wParam,
                          LPARAM lParam);
 
-        inline HWND GetMainWindow() { return m_hWnd; };
-
-    private:
+    protected:
         HWND m_hWnd;
     };
 }
+

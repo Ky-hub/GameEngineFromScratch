@@ -1,14 +1,13 @@
 cmake_minimum_required (VERSION 3.1) 
-
-
 project (GameEngineFromScrath)
-set (CMAKE_C_STANDARD 99)
-set (CMAKE_CXX_STANDARD 11)
 
+set (CMAKE_C_STANDARD 11)
+set (CMAKE_CXX_STANDARD 11)
+if(NOT MSVC)
+set (CMAKE_CXX_FLAGS "-Wno-gnu-anonymous-struct -Wno-nested-anon-types")
+endif(NOT MSVC)
 
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Platform")
-list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/External/src/crossguid/cmake")
 include(TargetArchDetect)
 
 target_architecture(TARGET_ARCH)
@@ -19,26 +18,34 @@ else()
         set(ARCH_BIT 32)
 endif()
 
-include_directories("${PROJECT_SOURCE_DIR}")
-include_directories("${PROJECT_SOURCE_DIR}/Framework/Parser")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/Common")
-include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
 include_directories("${PROJECT_SOURCE_DIR}/Framework/GeomMath")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Interface")
+include_directories("${PROJECT_SOURCE_DIR}/Framework/Parser")
 include_directories("${PROJECT_SOURCE_DIR}/RHI")
+include_directories("${PROJECT_SOURCE_DIR}/")
 IF(${UNIX})
-    set(MYGE_TARGET_PLATFORM "Linux")
+    IF(${APPLE})
+        set(MYGE_TARGET_PLATFORM "Darwin")
+    ELSE(${APPLE})
+        set(MYGE_TARGET_PLATFORM "Linux")
+    ENDIF(${APPLE})
 ELSEIF(${WIN32})
     set(MYGE_TARGET_PLATFORM "Windows")
+ELSEIF(${CMAKE_SYSTEM_NAME} MATCHES Orbis)
+    set(MYGE_TARGET_PLATFORM "Orbis")
+    set(ORBIS 1)
 ENDIF(${UNIX})
 include_directories("${PROJECT_SOURCE_DIR}/Platform/${MYGE_TARGET_PLATFORM}")
 set(MYGE_EXTERNAL_ROOT ${PROJECT_SOURCE_DIR}/External/${MYGE_TARGET_PLATFORM}/)
 include_directories("${MYGE_EXTERNAL_ROOT}include")
 set(MYGE_EXTERNAL_LIBRARY_PATH ${MYGE_EXTERNAL_ROOT}lib/)
-
+find_library(XG_LIBRARY xg PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} )
+find_library(OPENDDL_LIBRARY OpenDDL PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} )
+find_library(OPENGEX_LIBRARY OpenGEX PATHS ${MYGE_EXTERNAL_LIBRARY_PATH} )
 include(CTest)
 include(CheckCXXSourceCompiles)
-include(PlatformDependencies) # 在crossguid 
-
+include(PlatformDependencies)
 CHECK_CXX_SOURCE_COMPILES(
 "#include <memory>
 
@@ -49,22 +56,23 @@ int main(int argc, char** argv)
     return *my_int;
 }
 "
-HAVE_MAKE_UNIQUE)
-
+ HAVE_MAKE_UNIQUE)
 configure_file(${PROJECT_SOURCE_DIR}/config.h.in ${PROJECT_SOURCE_DIR}/config.h)
-
 add_subdirectory(Framework)
 add_subdirectory(Platform)
 add_subdirectory(RHI)
 add_subdirectory(Test)
-
-
 
 # ------------------------- Begin Generic CMake Variable Logging ------------------
 
 # /*	C++ comment style not allowed	*/
 
 
+# current generator in use 
+MESSAGE( STATUS "CMAKE_GENERATOR:         " ${CMAKE_GENERATOR} )
+
+# if you are building in-source, this is the same as CMAKE_SOURCE_DIR, otherwise 
+# this is the top level directory of your build tree 
 MESSAGE( STATUS "CMAKE_BINARY_DIR:         " ${CMAKE_BINARY_DIR} )
 
 # if you are building in-source, this is the same as CMAKE_CURRENT_SOURCE_DIR, otherwise this 
@@ -114,6 +122,20 @@ MESSAGE( STATUS "CMAKE_INCLUDE_PATH: " ${CMAKE_INCLUDE_PATH} )
 # this is used when searching for libraries e.g. using the FIND_LIBRARY() command.
 MESSAGE( STATUS "CMAKE_LIBRARY_PATH: " ${CMAKE_LIBRARY_PATH} )
 
+## HOST
+# the complete system name, e.g. "Linux-2.4.22", "FreeBSD-5.4-RELEASE" or "Windows 5.1" 
+MESSAGE( STATUS "CMAKE_HOST_SYSTEM: " ${CMAKE_HOST_SYSTEM} )
+
+# the short system name, e.g. "Linux", "FreeBSD" or "Windows"
+MESSAGE( STATUS "CMAKE_HOST_SYSTEM_NAME: " ${CMAKE_HOST_SYSTEM_NAME} )
+
+# only the version part of CMAKE_SYSTEM 
+MESSAGE( STATUS "CMAKE_HOST_SYSTEM_VERSION: " ${CMAKE_HOST_SYSTEM_VERSION} )
+
+# the processor name (e.g. "Intel(R) Pentium(R) M processor 2.00GHz") 
+MESSAGE( STATUS "CMAKE_HOST_SYSTEM_PROCESSOR: " ${CMAKE_HOST_SYSTEM_PROCESSOR} )
+
+## TARGET
 # the complete system name, e.g. "Linux-2.4.22", "FreeBSD-5.4-RELEASE" or "Windows 5.1" 
 MESSAGE( STATUS "CMAKE_SYSTEM: " ${CMAKE_SYSTEM} )
 
@@ -143,6 +165,9 @@ MESSAGE( STATUS "CYGWIN: " ${CYGWIN} )
 
 # is TRUE on Windows when using a Borland compiler 
 MESSAGE( STATUS "BORLAND: " ${BORLAND} )
+
+# is TRUE on PS4
+MESSAGE( STATUS "ORBIS: " ${ORBIS} )
 
 # Microsoft compiler 
 MESSAGE( STATUS "MSVC: " ${MSVC} )
@@ -178,11 +203,18 @@ MESSAGE( STATUS "CMAKE_SUPPRESS_REGENERATION: " ${CMAKE_SUPPRESS_REGENERATION} )
 # But there are also two variables exactly for this purpose: 
 
 # the compiler flags for compiling C sources 
-MESSAGE( STATUS "CMAKE_C_FLAGS: " ${CMAKE_C_FLAGS} )
+MESSAGE( STATUS "CMAKE_C_FLAGS: "                   ${CMAKE_C_FLAGS} )
+MESSAGE( STATUS "CMAKE_C_FLAGS_DEBUG: "             ${CMAKE_C_FLAGS_DEBUG})
+MESSAGE( STATUS "CMAKE_C_FLAGS_RELEASE: "           ${CMAKE_C_FLAGS_RELEASE})
+MESSAGE( STATUS "CMAKE_C_FLAGS_RELWITHDEBINFO: "    ${CMAKE_C_FLAGS_RELWITHDEBINFO})
+MESSAGE( STATUS "CMAKE_C_FLAGS_MINSIZEREL: "        ${CMAKE_C_FLAGS_MINSIZEREL})
 
 # the compiler flags for compiling C++ sources 
-MESSAGE( STATUS "CMAKE_CXX_FLAGS: " ${CMAKE_CXX_FLAGS} )
-
+MESSAGE( STATUS "CMAKE_CXX_FLAGS: "                 ${CMAKE_CXX_FLAGS} )
+MESSAGE( STATUS "CMAKE_CXX_FLAGS_DEBUG: "           ${CMAKE_CXX_FLAGS_DEBUG} )
+MESSAGE( STATUS "CMAKE_CXX_FLAGS_RELEASE: "         ${CMAKE_CXX_FLAGS_RELEASE} )
+MESSAGE( STATUS "CMAKE_CXX_FLAGS_RELWITHDEBINFO: "  ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} )
+MESSAGE( STATUS "CMAKE_CXX_FLAGS_MINSIZEREL: "      ${CMAKE_CXX_FLAGS_MINSIZEREL} )
 
 # Choose the type of build.  Example: SET(CMAKE_BUILD_TYPE Debug) 
 MESSAGE( STATUS "CMAKE_BUILD_TYPE: " ${CMAKE_BUILD_TYPE} )
@@ -205,3 +237,16 @@ MESSAGE( STATUS "CMAKE_COMPILER_IS_GNUCXX : " ${CMAKE_COMPILER_IS_GNUCXX} )
 # the tools for creating libraries 
 MESSAGE( STATUS "CMAKE_AR: " ${CMAKE_AR} )
 MESSAGE( STATUS "CMAKE_RANLIB: " ${CMAKE_RANLIB} )
+
+MESSAGE( STATUS "CMAKE_CROSSCOMPILING: " ${CMAKE_CROSSCOMPILING} )
+
+MESSAGE( STATUS "TARGET_ARCH: " ${TARGET_ARCH} )
+
+MESSAGE( STATUS "XG_LIBRARY: " ${XG_LIBRARY} )
+MESSAGE( STATUS "OPENDDL_LIBRARY: " ${OPENDDL_LIBRARY} )
+MESSAGE( STATUS "OPENGEX_LIBRARY: " ${OPENGEX_LIBRARY} )
+
+#
+#MESSAGE( STATUS ": " ${} )
+
+# ------------------------- End of Generic CMake Variable Logging ------------------

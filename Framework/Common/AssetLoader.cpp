@@ -106,7 +106,7 @@ My::Buffer My::AssetLoader::SyncOpenAndReadText(const char *filePath)
         size_t length = GetSize(fp);
 
         pBuff = new Buffer(length + 1);
-        fread(pBuff->m_pData, length, 1, static_cast<FILE*>(fp));
+        length = fread(pBuff->m_pData, 1, length, static_cast<FILE*>(fp));
         pBuff->m_pData[length] = '\0';
 
         CloseFile(fp);
@@ -183,3 +183,4 @@ int32_t My::AssetLoader::Seek(AssetFilePtr fp, long offset, AssetSeekBase where)
 {
     return fseek(static_cast<FILE*>(fp), offset, static_cast<int>(where));
 }
+

@@ -49,3 +49,4 @@ T endian_net_unsigned_int(T native_number)
 
     return result;
 }
+

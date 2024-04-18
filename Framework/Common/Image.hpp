@@ -15,3 +15,5 @@ namespace My {
 
     std::ostream& operator<<(std::ostream& out, const Image& image);
 }
+
+

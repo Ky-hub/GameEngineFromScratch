@@ -10,3 +10,4 @@ namespace My {
         virtual Image Parse(const Buffer& buf) = 0;
     };
 }
+

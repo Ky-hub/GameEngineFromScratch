@@ -1,0 +1,4 @@
+
+cmd里面删除文件或文件夹
+    del /s /q "C:\path\to\directory\*.*"
+    rd /s /q "C:\path\to\directory\*"
